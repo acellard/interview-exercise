@@ -1,4 +1,4 @@
-package content
+package runner
 
 import (
 	"encoding/json"
@@ -12,7 +12,8 @@ import (
 )
 
 type Handler interface {
-	Handle(fileName string) (float64, error)
+	ExecJob(fileName string) error
+	ReadJobPerformance(jobID string) (float64, error)
 }
 
 type handler struct{}
@@ -21,23 +22,8 @@ func NewHandler() Handler {
 	return &handler{}
 }
 
-func (h *handler) Handle(fileName string) (float64, error) {
-	// Check if file is correct docker file
-	f, err := os.Open(fileName)
-	if err != nil {
-		return 0, err
-	}
-
-	err = h.verifyDockerFile(f)
-	if err != nil {
-		return 0, err
-	}
-
-	err = h.execDockerFile()
-	if err != nil {
-		return 0, err
-	}
-
+func (h *handler) ReadJobPerformance(jobID string) (float64, error) {
+	// Check job status
 	jsonFile, err := os.Open("./data/perf.json")
 	if err != nil {
 		fmt.Println("cannot read perf: ", err)
@@ -63,6 +49,25 @@ func (h *handler) Handle(fileName string) (float64, error) {
 	default:
 		return 0, fmt.Errorf("unknown performance type")
 	}
+}
+
+func (h *handler) ExecJob(fileName string) error {
+	f, err := os.Open(fileName)
+	if err != nil {
+		return err
+	}
+
+	err = h.verifyDockerFile(f)
+	if err != nil {
+		return err
+	}
+
+	err = h.execDockerFile()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (h *handler) verifyDockerFile(f *os.File) error {

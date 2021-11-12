@@ -7,12 +7,12 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/alisstaki/interview-exercise/internal/content"
+	"github.com/alisstaki/interview-exercise/internal/runner"
 	service "github.com/alisstaki/interview-exercise/service/v1"
 )
 
 func main() {
-	s := service.New(mux.NewRouter(), content.NewHandler())
+	s := service.New(mux.NewRouter(), runner.NewHandler())
 
 	s.DefineHandlers()
 
