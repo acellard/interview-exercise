@@ -48,6 +48,13 @@ curl --request POST \
   --form 'file=FROM ubuntu:16.04
 
 # train machine learning model
+```bash
+cat <<EOF > Dockerfile.test
+FROM ubuntu:16.04
+ARG version
+ENV VERSION=${version}
+CMD echo '{"perf":0.99}' > "/data/perf-${VERSION}.json"
+EOF
 
 # save performances
 
